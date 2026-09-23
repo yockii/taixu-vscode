@@ -1,8 +1,8 @@
 {
   "name": "taixu-vscode",
   "displayName": "Taixu Language",
-  "description": "Taixu (.tx) language support — syntax, snippets and LSP client powered by `taixu lsp` (same-engine, zero in-plugin language implementation).",
-  "version": "0.0.1",
+  "description": "Taixu (.tx) language support — syntax, snippets, LSP client powered by `taixu lsp` and DAP debugging powered by `taixu dap` (same-engine, zero in-plugin language implementation).",
+  "version": "0.0.2",
   "publisher": "taixu",
   "license": "SEE LICENSE IN LICENSE-APACHE",
   "repository": {
@@ -13,7 +13,8 @@
     "vscode": "^1.80.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Debuggers"
   ],
   "activationEvents": [],
   "main": "./src/extension.js",
@@ -50,7 +51,7 @@
         "taixu.path": {
           "type": "string",
           "default": "taixu",
-          "description": "Path to the taixu executable (LSP server = `taixu lsp --stdio`)."
+          "description": "Path to the taixu executable (LSP server = `taixu lsp --stdio`). Debugging resolves `taixu` from PATH or the TAIXU_PATH environment variable."
         }
       }
     },
@@ -59,6 +60,57 @@
         "command": "taixu.checkServer",
         "title": "Taixu: Check Server",
         "category": "Taixu"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "taixu",
+        "label": "Taixu Debug",
+        "languages": [
+          "taixu"
+        ],
+        "program": "./src/debugAdapter.js",
+        "runtime": "node",
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "program"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "要调试的 .tx 源文件（建议 ${workspaceFolder}/app.tx 绝对形态）",
+                "default": "${workspaceFolder}/main.tx"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "传给程序 main(args) 的参数",
+                "default": []
+              },
+              "cwd": {
+                "type": "string",
+                "description": "调试目标工作目录（程序相对路径读写以此为准）",
+                "default": "${workspaceFolder}"
+              }
+            }
+          }
+        },
+        "configurationSnippets": [
+          {
+            "label": "Taixu: 启动调试（launch .tx 程序）",
+            "description": "调试当前工作区的 Taixu 程序（解释器会话：断点/步进/变量）",
+            "body": {
+              "type": "taixu",
+              "request": "launch",
+              "name": "调试 Taixu 程序",
+              "program": "^\"\\${workspaceFolder}/main.tx\"",
+              "cwd": "^\"\\${workspaceFolder}\""
+            }
+          }
+        ]
       }
     ]
   },
