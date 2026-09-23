@@ -1,0 +1,47 @@
+{
+  "main": {
+    "prefix": "main",
+    "body": ["function main(args: []string): int {", "\t$0", "\treturn 0;", "}"],
+    "description": "main 入口（args + int 返回）"
+  },
+  "function": {
+    "prefix": "fn",
+    "body": ["function ${1:name}(${2:a: int}): int {", "\t$0", "\treturn 0;", "}"],
+    "description": "具名函数"
+  },
+  "asyncfn": {
+    "prefix": "asyncfn",
+    "body": ["async function ${1:name}(${2:a: int}): int {", "\t$0", "\treturn 0;", "}"],
+    "description": "async 函数（着色面：调用得 Future<T>）"
+  },
+  "errunion": {
+    "prefix": "ferr",
+    "body": ["function ${1:name}(${2:a: int}): int | Error {", "\t$0", "\treturn 0;", "}"],
+    "description": "失败通道函数（T | Error）"
+  },
+  "struct": {
+    "prefix": "st",
+    "body": ["struct ${1:Name} {", "\t${2:field}: int,", "}"],
+    "description": "struct 声明（值语义）"
+  },
+  "enum": {
+    "prefix": "enu",
+    "body": ["enum ${1:Name} {", "\t${2:Variant}(${3:value: int}),", "}"],
+    "description": "enum 声明（判别联合）"
+  },
+  "test": {
+    "prefix": "test",
+    "body": ["test \"${1:name}\" {", "\tassert(${2:cond}, \"${3:message}\");", "}"],
+    "description": "test 块"
+  },
+  "listops": {
+    "prefix": "list",
+    "body": ["const ${1:xs}: List<int> = listNew();", "listPush(${1:xs}, ${2:item});"],
+    "description": "List 六内建起步"
+  },
+  "spawnawait": {
+    "prefix": "spawn",
+    "body": ["const ${1:fut} = ${2:job}($3);", "const ${4:v} = await ${1:fut} catch -1;"],
+    "description": "spawn + await（async 体内）"
+  }
+}

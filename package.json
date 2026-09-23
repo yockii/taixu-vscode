@@ -1,0 +1,64 @@
+{
+  "name": "taixu-vscode",
+  "displayName": "Taixu Language",
+  "description": "Taixu (.tx) language support — syntax, snippets and LSP client powered by `taixu lsp` (same-engine, zero in-plugin language implementation).",
+  "version": "0.0.1",
+  "publisher": "taixu",
+  "license": "SEE LICENSE IN LICENSE-APACHE",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "taixu",
+        "aliases": [
+          "Taixu",
+          "taixu"
+        ],
+        "extensions": [
+          ".tx"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "taixu",
+        "scopeName": "source.taixu",
+        "path": "./syntaxes/taixu.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "taixu",
+        "path": "./snippets/taixu.json"
+      }
+    ],
+    "configuration": {
+      "title": "Taixu",
+      "properties": {
+        "taixu.path": {
+          "type": "string",
+          "default": "taixu",
+          "description": "Path to the taixu executable (LSP server = `taixu lsp --stdio`)."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "taixu.checkServer",
+        "title": "Taixu: Check Server",
+        "category": "Taixu"
+      }
+    ]
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}

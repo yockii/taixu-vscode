@@ -1,0 +1,124 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Taixu",
+  "scopeName": "source.taixu",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#template-string" },
+    { "include": "#string" },
+    { "include": "#numbers" },
+    { "include": "#extern-decl" },
+    { "include": "#function-decl" },
+    { "include": "#keywords" },
+    { "include": "#context-keywords" },
+    { "include": "#builtin-types" },
+    { "include": "#builtin-fns" },
+    { "include": "#predeclared" },
+    { "include": "#constants" },
+    { "include": "#fn-call" },
+    { "include": "#types" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name": "comment.block.taixu", "begin": "/\\*", "end": "\\*/" },
+        { "name": "comment.line.double-slash.taixu", "match": "//.*$" }
+      ]
+    },
+    "string": {
+      "name": "string.quoted.double.taixu",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "constant.character.escape.taixu", "match": "\\\\(u\\{[0-9A-Fa-f]+\\}|[ntr\\\\\"0])" }
+      ]
+    },
+    "template-string": {
+      "name": "string.template.taixu",
+      "begin": "`",
+      "end": "`",
+      "patterns": [
+        { "name": "constant.character.escape.taixu", "match": "\\\\[`\\\\$]" },
+        {
+          "name": "meta.template.expression.taixu",
+          "begin": "\\$\\{",
+          "end": "\\}",
+          "patterns": [{ "include": "source.taixu" }]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "name": "constant.numeric.hex.taixu", "match": "\\b0[xX][0-9A-Fa-f_]+\\b" },
+        { "name": "constant.numeric.octal.taixu", "match": "\\b0[oO][0-7_]+\\b" },
+        { "name": "constant.numeric.binary.taixu", "match": "\\b0[bB][01_]+\\b" },
+        { "name": "constant.numeric.float.taixu", "match": "\\b[0-9][0-9_]*\\.[0-9_]+([eE][+-]?[0-9]+)?\\b|\\b[0-9][0-9_]*[eE][+-]?[0-9]+\\b" },
+        { "name": "constant.numeric.integer.taixu", "match": "\\b[0-9][0-9_]*\\b" }
+      ]
+    },
+    "extern-decl": {
+      "comment": "declare function 名(...): ...; —— extern 声明行整体高亮",
+      "match": "^\\s*(declare)\\s+(function)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.other.taixu" },
+        "2": { "name": "keyword.other.taixu" },
+        "3": { "name": "entity.name.function.taixu" }
+      }
+    },
+    "function-decl": {
+      "comment": "function 名( —— 声明位（async 前缀另着色）",
+      "match": "(\\basync\\s+)?\\b(function)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.control.async.taixu" },
+        "2": { "name": "keyword.other.taixu" },
+        "3": { "name": "entity.name.function.taixu" }
+      }
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.taixu",
+          "match": "\\b(if|else|while|for|in|break|continue|return|switch|case|await|catch|as)\\b"
+        },
+        {
+          "name": "keyword.other.taixu",
+          "match": "\\b(export|function|struct|enum|let|const|test|import|from|new|declare)\\b"
+        },
+        { "name": "keyword.operator.expression.taixu", "match": "\\?|=>|\\|" }
+      ]
+    },
+    "context-keywords": {
+      "comment": "async/await 为上下文关键字（保留字表冻结——此处仅词法着色面）",
+      "match": "\\b(async)\\b",
+      "name": "keyword.control.async.taixu"
+    },
+    "builtin-types": {
+      "match": "\\b(int|float|bool|string|void|Error)\\b",
+      "name": "support.type.taixu"
+    },
+    "builtin-fns": {
+      "comment": "预声明内建函数（语言规范随版本冻结；20–24 含任务与 IO 面）",
+      "match": "\\b(err|print|readFile|writeFile|len|toStr|unref|weak|deref|byteAt|utf8Encode|listNew|listPush|listPop|listGet|listSet|listLen|assert|panic|taskCancel|taskCancelled|taskAwaitAny|nowMs)\\b",
+      "name": "support.function.builtin.taixu"
+    },
+    "predeclared": {
+      "match": "\\b(Ref|Weak|List|Future|None)\\b",
+      "name": "support.class.taixu"
+    },
+    "constants": {
+      "patterns": [
+        { "name": "constant.language.boolean.taixu", "match": "\\b(true|false)\\b" },
+        { "name": "constant.language.none.taixu", "match": "\\bNone\\b" }
+      ]
+    },
+    "fn-call": {
+      "match": "([A-Za-z_][A-Za-z0-9_]*)\\s*\\(",
+      "captures": { "1": { "name": "entity.name.function.call.taixu" } }
+    },
+    "types": {
+      "comment": "PascalCase 标识符着类型色（struct/enum 声明与引用的启发面）",
+      "match": "\\b([A-Z][A-Za-z0-9_]*)\\b",
+      "name": "entity.name.type.taixu"
+    }
+  }
+}
