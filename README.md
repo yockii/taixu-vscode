@@ -23,7 +23,7 @@
 git clone https://github.com/yockii/taixu-vscode
 cd taixu-vscode
 npm install
-npx @vscode/vsce package        # 生成 taixu-vscode-0.0.2.vsix
+npx @vscode/vsce package        # 生成 taixu-vscode-0.0.3.vsix
 ```
 
 然后在 VS Code 中：扩展面板 → 右上角 `…` 菜单 → **从 VSIX 安装…** →
@@ -100,6 +100,7 @@ F5 启动即可打断点、步进、看调用栈与变量。工作方式：
 |---|---|---|
 | 0.0.1 | 支持 LSP 的 `taixu`（诊断/格式化/符号/hover/补全/定义） | 首版 |
 | 0.0.2 | 0.0.1 全部＋支持 DAP 的 `taixu`（`taixu dap`） | 调试桥＋debuggers 贡献面 |
+| 0.0.3 | 0.0.2 全部（无功能面变化——CI 首跑点验版） | tag v0.0.3 触发 Actions 打包 VSIX→Release 产物（V0.42-M0-② TOOL-53） |
 
 ## 暂不支持
 

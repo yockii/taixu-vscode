@@ -2,7 +2,7 @@
   "name": "taixu-vscode",
   "displayName": "Taixu Language",
   "description": "Taixu (.tx) language support — syntax, snippets, LSP client powered by `taixu lsp` and DAP debugging powered by `taixu dap` (same-engine, zero in-plugin language implementation).",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "taixu",
   "license": "SEE LICENSE IN LICENSE-APACHE",
   "repository": {
