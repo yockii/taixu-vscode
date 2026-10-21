@@ -22,3 +22,6 @@
 *.txc -text
 *.wasm -text
 *.dat -text
+
+# 编辑器测试驱动不计入 GitHub 语言统计；src/ 仍是正式插件实现。
+/test/** -linguist-detectable
