@@ -2,7 +2,7 @@
   "name": "taixu-vscode",
   "displayName": "Taixu Language",
   "description": "Taixu (.tx) language support — syntax, snippets, LSP client powered by `taixu lsp` and DAP debugging powered by `taixu dap` (same-engine, zero in-plugin language implementation).",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "taixu",
   "license": "SEE LICENSE IN LICENSE-APACHE",
   "repository": {
@@ -10,7 +10,7 @@
     "url": "https://github.com/yockii/taixu-vscode"
   },
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.82.0"
   },
   "categories": [
     "Programming Languages",
@@ -50,8 +50,9 @@
       "properties": {
         "taixu.path": {
           "type": "string",
-          "default": "taixu",
-          "description": "Path to the taixu executable (LSP server = `taixu lsp --stdio`). Debugging resolves `taixu` from PATH or the TAIXU_PATH environment variable."
+          "scope": "window",
+          "default": "",
+          "description": "用于语言服务和原生调试的 taixu 可执行文件。留空时依次取 TAIXU_PATH 环境变量、PATH 中的 taixu。修改后语言服务自动重启。"
         }
       }
     },
@@ -69,8 +70,6 @@
         "languages": [
           "taixu"
         ],
-        "program": "./src/debugAdapter.js",
-        "runtime": "node",
         "configurationAttributes": {
           "launch": {
             "required": [
@@ -101,7 +100,7 @@
         "configurationSnippets": [
           {
             "label": "Taixu: 启动调试（launch .tx 程序）",
-            "description": "调试当前工作区的 Taixu 程序（解释器会话：断点/步进/变量）",
+            "description": "调试当前工作区的 Taixu 程序（原生插桩：断点/步进/变量）",
             "body": {
               "type": "taixu",
               "request": "launch",
@@ -113,6 +112,9 @@
         ]
       }
     ]
+  },
+  "scripts": {
+    "test:editor": "node test/run.js"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"

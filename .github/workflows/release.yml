@@ -40,8 +40,9 @@ jobs:
 
       - name: 打包 VSIX（npx vsce）
         run: |
+          npm ci
           mkdir -p dist
-          npx --yes @vscode/vsce@latest package --no-dependencies --out "dist/taixu-vscode-${GITHUB_REF_NAME#v}.vsix"
+          npx --yes @vscode/vsce@4.0.0 package --out "dist/taixu-vscode-${GITHUB_REF_NAME#v}.vsix"
 
       - name: 上传构建产物（workflow artifact）
         uses: actions/upload-artifact@v4
@@ -60,6 +61,6 @@ jobs:
       # 可选：发布到 VS Code Marketplace（需在仓库 Secrets 配置 VSCE_PAT）。
       # 配置后取消注释即可随 tag 一并发布：
       # - name: 发布 Marketplace
-      #   run: npx --yes @vscode/vsce@latest publish --no-dependencies
+      #   run: npx --yes @vscode/vsce@4.0.0 publish
       #   env:
       #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
