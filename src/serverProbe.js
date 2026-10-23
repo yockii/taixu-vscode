@@ -21,9 +21,9 @@ async function version(command, cwd) {
   });
 }
 
-async function handshake(command, cwd) {
+async function handshake(command, cwd, extraArgs) {
   return new Promise(resolve => {
-    const child = spawn(command, ['lsp', '--stdio'], { cwd, windowsHide: true });
+    const child = spawn(command, ['lsp', '--stdio', ...extraArgs], { cwd, windowsHide: true });
     let buffer = Buffer.alloc(0);
     let initialized = false;
     let shutDown = false;
@@ -51,6 +51,8 @@ async function handshake(command, cwd) {
           const message = JSON.parse(buffer.subarray(split + 4, split + 4 + length).toString('utf8'));
           buffer = buffer.subarray(split + 4 + length);
           if (message.jsonrpc !== '2.0') throw new Error('invalid JSON-RPC response');
+          // Requests and notifications from the server carry a method; only responses answer ours.
+          if ('method' in message) continue;
           if (message.id === 1) {
             const capabilities = message.result?.capabilities;
             if (!capabilities || typeof capabilities !== 'object' || Array.isArray(capabilities) || message.error) {
@@ -83,9 +85,9 @@ async function handshake(command, cwd) {
   });
 }
 
-async function probeServer(command, cwd) {
+async function probeServer(command, cwd, extraArgs = []) {
   const actualVersion = await version(command, cwd);
-  const response = await handshake(command, cwd);
+  const response = await handshake(command, cwd, extraArgs);
   return { command, version: actualVersion, handshake: response, ok: !!actualVersion && response.ok };
 }
 module.exports = { probeServer };

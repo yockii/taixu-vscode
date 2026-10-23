@@ -11,8 +11,14 @@ if (!code || !compiler) {
   console.error('Set VSCODE_EXECUTABLE and TAIXU_TEST_COMPILER to absolute executable paths.');
   process.exit(2);
 }
-fs.mkdirSync(path.join(root, '.vscode-test'), { recursive: true });
-const state = fs.mkdtempSync(path.join(root, '.vscode-test', 'run-'));
+const runs = path.join(root, '.vscode-test');
+fs.mkdirSync(runs, { recursive: true });
+// Keep only the two most recent earlier runs (profiles are large); this run's directory is new.
+fs.readdirSync(runs).filter(name => name.startsWith('run-'))
+  .map(name => ({ name, time: fs.statSync(path.join(runs, name)).mtimeMs }))
+  .sort((a, b) => b.time - a.time).slice(2)
+  .forEach(old => fs.rmSync(path.join(runs, old.name), { recursive: true, force: true }));
+const state = fs.mkdtempSync(path.join(runs, 'run-'));
 const workspace = path.join(state, '工程 中文 & space');
 fs.mkdirSync(path.join(workspace, '.vscode'), { recursive: true });
 const settings = {

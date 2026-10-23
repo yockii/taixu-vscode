@@ -2,7 +2,7 @@
   "name": "taixu-vscode",
   "displayName": "Taixu Language",
   "description": "Taixu (.tx) language support — syntax, snippets, LSP client powered by `taixu lsp` and DAP debugging powered by `taixu dap` (same-engine, zero in-plugin language implementation).",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "taixu",
   "license": "SEE LICENSE IN LICENSE-APACHE",
   "repository": {
@@ -16,8 +16,19 @@
     "Programming Languages",
     "Debuggers"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onDebugResolve:taixu"
+  ],
   "main": "./src/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "受限模式下不采用工作区设置里的 taixu.path；语言服务只做只读分析，调试由 VS Code 在受限模式下禁用。",
+      "restrictedConfigurations": [
+        "taixu.path"
+      ]
+    }
+  },
   "contributes": {
     "languages": [
       {
@@ -52,7 +63,7 @@
           "type": "string",
           "scope": "window",
           "default": "",
-          "description": "用于语言服务和原生调试的 taixu 可执行文件。留空时依次取 TAIXU_PATH 环境变量、PATH 中的 taixu。修改后语言服务自动重启。"
+          "description": "用于语言服务和原生调试的 taixu 可执行文件：绝对路径，或在 PATH 中查找的命令名（不在工作区目录里查找）。留空时依次取 TAIXU_PATH 环境变量、PATH 中的 taixu。修改后语言服务自动重启。"
         }
       }
     },

@@ -4,3 +4,5 @@ test/**
 dist/**
 *.log
 package-lock.json
+.gitignore
+.gitattributes

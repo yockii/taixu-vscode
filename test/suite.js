@@ -65,6 +65,7 @@ async function lifecycle({ folder, main }) {
   if (process.platform !== 'win32') fs.chmodSync(copy, 0o755);
   const before = await servers();
   check('exactly one real language server before path change', before.length === 1 && before[0].args.includes('lsp'));
+  check('language server receives the workspace folder explicitly', before[0].args.includes('--workspace'));
   await config.update('path', copy, vscode.ConfigurationTarget.Workspace);
   const first = await until('new executable and old process exit', async () => {
     const current = await servers();
@@ -101,6 +102,29 @@ async function lifecycle({ folder, main }) {
     return symbols && symbols.some(s => s.name === 'main');
   });
   check('language service recovers after correcting a missing executable', true);
+  // A command name must never resolve to an executable planted in the workspace (spawn cwd).
+  const planted = path.join(folder.uri.fsPath, process.platform === 'win32' ? 'taixu.exe' : 'taixu');
+  fs.copyFileSync(copy, planted);
+  if (process.platform !== 'win32') fs.chmodSync(planted, 0o755);
+  try {
+    await config.update('path', 'taixu', vscode.ConfigurationTarget.Workspace);
+    const named = await command('taixu.checkServer');
+    const settle = Date.now() + 5000;
+    await until('restart with a command name', async () => (await servers()).length > 0 || Date.now() > settle);
+    check('command name is not resolved from the workspace directory',
+      (named.command === null ? /PATH/.test(named.problem) : path.isAbsolute(named.command) && named.command !== planted) &&
+      (await servers()).every(p => path.resolve(p.exe) !== path.resolve(planted)));
+    await config.update('path', `.${path.sep}taixu`, vscode.ConfigurationTarget.Workspace);
+    const relative = await command('taixu.checkServer');
+    check('relative taixu.path is rejected', !relative.ok && relative.command === null && /绝对路径/.test(relative.problem));
+  } finally {
+    await config.update('path', copy, vscode.ConfigurationTarget.Workspace);
+    await until('restore the valid compiler after name checks', async () => {
+      const current = await servers();
+      return current.length === 1 && current[0].exe === copy;
+    });
+    fs.rmSync(planted, { force: true });
+  }
 }
 
 async function editor() {

@@ -4,7 +4,7 @@ name: release
 # 插件零编译面（纯 JS＋JSON 贡献面），打包即校验；语言实现恒在
 # taixu 工具链侧（同引擎红线——插件端零语言实现副本）。
 #
-# 用法：git tag v0.0.3 && git push origin v0.0.3
+# 用法：git tag v<package.json 版本> && git push origin v<package.json 版本>
 # 产物：dist/taixu-vscode-<version>.vsix → GitHub Release 附件
 #
 # 前置（一次性，仓库 Settings → Secrets → Actions）：
