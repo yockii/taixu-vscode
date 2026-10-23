@@ -33,6 +33,14 @@ code --extensionDevelopmentPath=/path/to/taixu-vscode
 
 留空时依次取 `TAIXU_PATH` 环境变量、PATH 中的 `taixu`。命令名只在 PATH 的绝对目录中查找，不在工作区目录里查找；含路径分隔符的相对路径被拒绝。语言服务对每个本地工作区文件夹传 `--workspace`。未受信任的工作区不读取工作区级 `taixu.path`，只用用户级设置。修改配置后语言服务自动停止旧进程并重启；已有调试会话使用启动时的编译器，新会话使用新配置。
 
+Linux 上工作区若在主机共享挂载里（WSL 的 `/mnt/c` 为 9p，Docker Desktop 的绑定挂载多为 virtiofs），语言服务缺省拒绝把它作信任根。确需在其中工作时，在用户设置（或远程机器设置）里逐类开启，扩展逐项传 `--allow-mount-type`；工作区设置改不了这一项。网络 9p、nfs、cifs 等始终拒绝，Windows 上不起作用。
+
+```json
+{
+  "taixu.allowMountTypes": ["9p"]
+}
+```
+
 命令面板中的 **Taixu: Check Server** 检查 `--version`、完整 LSP initialize 回复及 shutdown/exit。结果见 **Taixu LSP** 输出通道。
 
 ## 调试

@@ -58,11 +58,14 @@ function workspaceUri() {
   return vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]?.uri;
 }
 
-// Every local workspace folder is authorised explicitly (taixu lsp only defaults to its cwd).
+// Every local workspace folder is authorised explicitly (taixu lsp only defaults to its cwd). Host-share mount
+// types (WSL /mnt/c is 9p) come only from machine-scoped settings: a workspace cannot widen the server's roots.
 function workspaceArgs() {
+  const kinds = vscode.workspace.getConfiguration('taixu').get('allowMountTypes', []);
   return (vscode.workspace.workspaceFolders || [])
     .filter(folder => folder.uri.scheme === 'file')
-    .flatMap(folder => ['--workspace', folder.uri.fsPath]);
+    .flatMap(folder => ['--workspace', folder.uri.fsPath])
+    .concat((Array.isArray(kinds) ? kinds : []).filter(k => typeof k === 'string' && k).flatMap(k => ['--allow-mount-type', k]));
 }
 
 function within(promise, ms, what) {
@@ -174,7 +177,7 @@ function activate(context) {
   context.subscriptions.push(channel);
   context.subscriptions.push(vscode.commands.registerCommand('taixu.checkServer', checkServer));
   context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
-    if (event.affectsConfiguration('taixu.path')) restartClient();
+    if (event.affectsConfiguration('taixu.path') || event.affectsConfiguration('taixu.allowMountTypes')) restartClient();
   }));
   context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(() => restartClient()));
   context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('taixu', {

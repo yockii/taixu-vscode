@@ -125,6 +125,30 @@ async function lifecycle({ folder, main }) {
     });
     fs.rmSync(planted, { force: true });
   }
+  // Host-share mount types are machine-scoped: a workspace (e.g. a cloned repo's .vscode/settings.json) cannot opt in.
+  let refused = false;
+  try {
+    await config.update('allowMountTypes', ['9p'], vscode.ConfigurationTarget.Workspace);
+  } catch {
+    refused = true;
+  }
+  check('workspace settings cannot enable host-share mounts',
+    refused && !vscode.workspace.getConfiguration('taixu').inspect('allowMountTypes').workspaceValue);
+  const plain = (await servers())[0];
+  await config.update('allowMountTypes', ['9p'], vscode.ConfigurationTarget.Global);
+  try {
+    await until('user opt-in restarts the server with --allow-mount-type', async () => {
+      const current = await servers();
+      return current.length === 1 && current[0].pid !== plain.pid && current[0].args.includes('--allow-mount-type 9p');
+    });
+    check('user-level host-share opt-in reaches the language server', true);
+  } finally {
+    await config.update('allowMountTypes', undefined, vscode.ConfigurationTarget.Global);
+    await until('opt-in removed again', async () => {
+      const current = await servers();
+      return current.length === 1 && !current[0].args.includes('--allow-mount-type');
+    });
+  }
 }
 
 async function editor() {

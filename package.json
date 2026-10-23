@@ -64,6 +64,23 @@
           "scope": "window",
           "default": "",
           "description": "用于语言服务和原生调试的 taixu 可执行文件：绝对路径，或在 PATH 中查找的命令名（不在工作区目录里查找）。留空时依次取 TAIXU_PATH 环境变量、PATH 中的 taixu。修改后语言服务自动重启。"
+        },
+        "taixu.allowMountTypes": {
+          "type": "array",
+          "scope": "machine",
+          "default": [],
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "9p",
+              "drvfs",
+              "virtiofs",
+              "fuse.grpcfuse",
+              "fakeowner"
+            ]
+          },
+          "description": "Linux 上允许作语言服务信任根的主机共享挂载类型（WSL 的 /mnt/c 为 9p，Docker Desktop 多为 virtiofs），逐项传给 taixu lsp --allow-mount-type；缺省为空即拒绝。只能在用户或远程机器设置里修改，工作区设置不生效；Windows 上不起作用。"
         }
       }
     },
